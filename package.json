@@ -1,0 +1,38 @@
+{
+  "name": "compilation-creator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Sirvess/compilation-creator.git",
+  "author": "Sirvess",
+  "scripts": {
+    "bundle": "rm -rf dist/ && rollup --c",
+    "clean": "rm -rf dist/ && rm -rf node_modules/",
+    "check-types": "tsc --noEmit",
+    "dev": "rollup --c rollup.config.dev.js --watch"
+  },
+  "dependencies": {
+    "most": "^1.9.0",
+    "most-subject": "^5.3.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "styled-components": "^5.2.0",
+    "tslib": "^2.0.3",
+    "typescript": "^4.0.3"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-html": "^0.2.0",
+    "@rollup/plugin-inject": "^4.0.2",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-replace": "^2.3.3",
+    "@rollup/plugin-typescript": "^6.0.0",
+    "@types/react": "^16.9.53",
+    "@types/react-dom": "^16.9.8",
+    "@types/styled-components": "^5.1.4",
+    "@types/youtube": "^0.0.40",
+    "prettier": "^2.1.2",
+    "rollup": "^2.32.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-serve": "^1.0.4"
+  }
+}
