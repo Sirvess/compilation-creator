@@ -14,9 +14,14 @@ const initializeYouTubeIframeAPI = () => {
   }
 };
 
+// 1. Add onYouTubeIframeAPIReady call back to window
+// 2. Add youtube iframe api script to document head. Once loaded,
+//  window.onYouTubeIframeAPIReady will be called.
+// 3. Can now initiate player iframe
 const useYTPlayer = (playerDivId: string, videos: Video[]) => {
   const [youTubeIframeReady, setYouTubeIframeReady] = React.useState(false);
   React.useEffect(() => {
+    // window.onYouTubeIframeAPIReady will be called by YouTube Iframe API once loaded
     (window as any).onYouTubeIframeAPIReady = () => setYouTubeIframeReady(true);
     initializeYouTubeIframeAPI();
   }, [setYouTubeIframeReady]);
@@ -76,6 +81,7 @@ const useYTPlayer = (playerDivId: string, videos: Video[]) => {
           });
         } else {
           // TODO: Currently not possible to do clean teardown using API?
+          // For now just reloading page once playback has ended
           player.destroy();
           window.location.reload();
         }
