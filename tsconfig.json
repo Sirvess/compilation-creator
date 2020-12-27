@@ -4,6 +4,7 @@
         "target": "es2019",
         "module": "esnext",
         "moduleResolution": "node",
+        "skipLibCheck": true,
         "jsx": "react",
         "strict": true
     },
