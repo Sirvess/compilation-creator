@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 
 const StartButton = styled.button`
   font-size: 32px;
@@ -43,55 +43,66 @@ const FormInput = styled.input`
   margin: 10px;
 `;
 
-const placeholderPlaylist = [
-  { id: "uvvqjyT0_gA", startSeconds: 98, endSeconds: 113 },
-  { id: "QESBcjX-G9g", startSeconds: 105, endSeconds: 115 },
-  { id: "yC8SPG2LwSA", startSeconds: 15, endSeconds: 20 },
-];
-const PLAYLIST_ITEMS = 3;
-// TODO: Implement form to allow starting custom playlist
 export const Form: React.ComponentType<{
   setPlaylist: (x: Video[]) => void;
 }> = ({ setPlaylist }) => {
-  const { register, handleSubmit } = useForm();
-  const playlistItems = Array.from(Array(PLAYLIST_ITEMS).keys());
+  // Use useFieldArray instead
+  const { control, register, handleSubmit } = useForm({
+    defaultValues: {
+      videos: [
+        ["uvvqjyT0_gA", 98, 113],
+        ["QESBcjX-G9g", 105, 115],
+        ["yC8SPG2LwSA", 15, 20],
+      ],
+      videoStartSeconds: [1, 2],
+      videoEndSeconds: [0, 3],
+    },
+  });
+  const { fields, append, remove } = useFieldArray({ control, name: "videos" });
   const onSubmit = (data) => {
-    const items = Object.keys(data).filter((key) => !isNaN(Number(key)));
-    const playlist = items.map((key) => {
-      const id = data[key];
-      const starts = data[key + "s"];
-      const ends = data[key + "e"];
+    console.log("derp data", data["data"]);
+    const playlist = data["data"].map((item) => {
+      console.log("item", item);
+      const id = item["video"];
+      const starts = item["startSeconds"];
+      const ends = item["endSeconds"];
       return { id, startSeconds: Number(starts), endSeconds: Number(ends) };
     });
     setPlaylist(playlist);
   };
+  console.log("derp fields", fields);
   return (
     <Container>
       Video Id, Start Seconds, End Seconds
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormContainer>
-          {...playlistItems.map((i) => (
-            <span key={i + "d"}>
+          {fields.map((field, i) => (
+            <span key={field.id}>
               <FormInput
-                name={i.toString()}
-                defaultValue={placeholderPlaylist[i]["id"]}
-                ref={register}
-                key={i}
+                name={`data[${i}].video`}
+                ref={register()}
+                defaultValue={field[0]}
               />
               <FormInput
-                name={i.toString() + "s"}
-                defaultValue={placeholderPlaylist[i]["startSeconds"]}
-                ref={register}
-                key={i + "s"}
+                name={`data[${i}].startSeconds`}
+                ref={register()}
+                defaultValue={field[1]}
               />
               <FormInput
-                name={i.toString() + "e"}
-                defaultValue={placeholderPlaylist[i]["endSeconds"]}
-                ref={register}
-                key={i + "e"}
+                name={`data[${i}].endSeconds`}
+                ref={register()}
+                defaultValue={field[2]}
               />
             </span>
           ))}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              append({ 0: "", 1: "", 2: "" });
+            }}
+          >
+            Add
+          </button>
           <StartButton>Play </StartButton>
         </FormContainer>
       </form>
