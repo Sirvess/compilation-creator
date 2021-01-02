@@ -41,6 +41,34 @@ const FormContainer = styled.div`
 
 const FormInput = styled.input`
   margin: 10px;
+  padding: 0.2em;
+  font-size: 20px;
+`;
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Button = styled.button`
+  margin: 5px;
+
+  font-size: 20px;
+  border: 0.1em solid black;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 0.12em;
+  padding: 0.2em;
+  text-decoration: none;
+  background-color: #884d8c;
+  font-weight: 300;
+  text-align: center;
+  transition: all 0.2s;
+  color: white;
+  :hover {
+    cursor: pointer;
+    background-color: #ffffff;
+    color: black;
+  }
 `;
 
 export const Form: React.ComponentType<{
@@ -58,7 +86,10 @@ export const Form: React.ComponentType<{
       videoEndSeconds: [0, 3],
     },
   });
-  const { fields, append, remove } = useFieldArray({ control, name: "videos" });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "videos",
+  });
   const onSubmit = (data) => {
     console.log("derp data", data["data"]);
     const playlist = data["data"].map((item) => {
@@ -93,16 +124,27 @@ export const Form: React.ComponentType<{
                 ref={register()}
                 defaultValue={field[2]}
               />
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  remove(i);
+                }}
+              >
+                Remove
+              </Button>
             </span>
           ))}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              append({ 0: "", 1: "", 2: "" });
-            }}
-          >
-            Add
-          </button>
+
+          <ButtonContainer>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                append({ 0: "", 1: "", 2: "" });
+              }}
+            >
+              Add
+            </Button>
+          </ButtonContainer>
           <StartButton>Play </StartButton>
         </FormContainer>
       </form>
