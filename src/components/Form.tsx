@@ -36,7 +36,7 @@ const FormContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-width: 600px;
+  min-width: 1000px;
 `;
 
 const FormInput = styled.input`
@@ -74,7 +74,6 @@ const Button = styled.button`
 export const Form: React.ComponentType<{
   setPlaylist: (x: Video[]) => void;
 }> = ({ setPlaylist }) => {
-  // Use useFieldArray instead
   const { control, register, handleSubmit } = useForm({
     defaultValues: {
       videos: [
@@ -82,30 +81,34 @@ export const Form: React.ComponentType<{
         ["QESBcjX-G9g", 105, 115],
         ["yC8SPG2LwSA", 15, 20],
       ],
-      videoStartSeconds: [1, 2],
-      videoEndSeconds: [0, 3],
     },
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "videos",
   });
-  const onSubmit = (data) => {
-    console.log("derp data", data["data"]);
-    const playlist = data["data"].map((item) => {
-      console.log("item", item);
-      const id = item["video"];
-      const starts = item["startSeconds"];
-      const ends = item["endSeconds"];
-      return { id, startSeconds: Number(starts), endSeconds: Number(ends) };
-    });
+  const onSubmit = (data: { data: typeof control[] }) => {
+    console.log("derp data", data);
+    const playlist = data["data"]
+      .filter((item) => item?.video?.length > 0)
+      .map((item) => {
+        console.log("item", item);
+        const id = item["video"];
+        const starts = item["startSeconds"];
+        const ends = item["endSeconds"];
+        return { id, startSeconds: Number(starts), endSeconds: Number(ends) };
+      });
     setPlaylist(playlist);
   };
-  console.log("derp fields", fields);
+  console.log("Derp field");
   return (
     <Container>
       Video Id, Start Seconds, End Seconds
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form
+        onSubmit={(a) => {
+          return handleSubmit(onSubmit)(a);
+        }}
+      >
         <FormContainer>
           {fields.map((field, i) => (
             <span key={field.id}>
@@ -113,6 +116,8 @@ export const Form: React.ComponentType<{
                 name={`data[${i}].video`}
                 ref={register()}
                 defaultValue={field[0]}
+                required={true}
+                key={field.id}
               />
               <FormInput
                 name={`data[${i}].startSeconds`}
@@ -124,14 +129,6 @@ export const Form: React.ComponentType<{
                 ref={register()}
                 defaultValue={field[2]}
               />
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  remove(i);
-                }}
-              >
-                Remove
-              </Button>
             </span>
           ))}
 
@@ -143,6 +140,14 @@ export const Form: React.ComponentType<{
               }}
             >
               Add
+            </Button>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                remove(fields.length - 1);
+              }}
+            >
+              Remove
             </Button>
           </ButtonContainer>
           <StartButton>Play </StartButton>
