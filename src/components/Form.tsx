@@ -2,62 +2,15 @@ import * as React from "react";
 import styled from "styled-components";
 import { useForm, useFieldArray } from "react-hook-form";
 
-const StartButton = styled.button`
-  font-size: 32px;
-  padding: 0.35em 1.2em;
-  border: 0.1em solid black;
-  margin: 0 0.3em 0.3em 0;
-  border-radius: 0.12em;
-  text-decoration: none;
-  background-color: #f98a5e;
-  color: black;
-  font-weight: 300;
-  text-align: center;
-  transition: all 0.2s;
-  :hover {
-    cursor: pointer;
-    background-color: #ffffff;
-  }
-`;
-
-const Container = styled.div`
-  padding-top: 100px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-`;
-
-const FormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-width: 1000px;
-`;
-
-const FormInput = styled.input`
-  margin: 10px;
-  padding: 0.2em;
-  font-size: 20px;
-`;
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+const FORM_WIDTH = `900px`;
 
 const Button = styled.button`
-  margin: 5px;
-
+  margin: 10px 0.3em 0.3em 10px;
   font-size: 20px;
   border: 0.1em solid black;
   margin: 0 0.3em 0.3em 0;
   border-radius: 0.12em;
-  padding: 0.2em;
+  padding: 0.35em 1.2em;
   text-decoration: none;
   background-color: #884d8c;
   font-weight: 300;
@@ -71,49 +24,111 @@ const Button = styled.button`
   }
 `;
 
+const StartButton = styled(Button)`
+  font-size: 32px;
+  background-color: #f98a5e;
+  color: black;
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+`;
+
+const Container = styled(FlexContainer)`
+  padding-top: 100px;
+  background-color: white;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+`;
+
+const FormContainer = styled(FlexContainer)`
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: ${FORM_WIDTH};
+`;
+
+const FormInput = styled.input`
+  padding: 0.2em;
+  padding-left: 0;
+  width: calc(100% / 3);
+  margin: 10px 10px 10px 0px;
+  font-size: 20px;
+`;
+const ButtonContainer = styled(FlexContainer)`
+  justify-content: center;
+  align-items: center;
+`;
+
+const InputSpan = styled.span`
+  min-width: ${FORM_WIDTH};
+  display: flex;
+  justify-content: space-between;
+  align-items: space-between;
+  margin-bottom: 10px;
+`;
+
+const Label = styled.p`
+  font-size: 20px;
+  padding: 0.2em 0.2em 0.2em 0;
+  text-align: left;
+  width: calc(100% / 3);
+`;
+const onSubmit = (setPlaylist: (x: Playlist) => void) => (data: {
+  data: Video[];
+}) => {
+  const playlist: Playlist = data["data"]
+    .filter((item) => item?.id?.length && item.id.length > 0)
+    .map(({ id, startSeconds, endSeconds }: Video) => {
+      const starts = startSeconds;
+      const ends = endSeconds;
+      return { id, startSeconds: Number(starts), endSeconds: Number(ends) };
+    });
+  setPlaylist(playlist.reverse());
+};
+
+// Used as initial value for form
+// Array index corresponds to index of property in Video-type
+const FallbackVideos = [
+  ["uvvqjyT0_gA", 98, 113],
+  ["QESBcjX-G9g", 105, 115],
+  ["yC8SPG2LwSA", 15, 20],
+];
+
 export const Form: React.ComponentType<{
   setPlaylist: (x: Video[]) => void;
 }> = ({ setPlaylist }) => {
   const { control, register, handleSubmit } = useForm({
     defaultValues: {
-      videos: [
-        ["uvvqjyT0_gA", 98, 113],
-        ["QESBcjX-G9g", 105, 115],
-        ["yC8SPG2LwSA", 15, 20],
-      ],
+      videos: FallbackVideos,
     },
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "videos",
   });
-  const onSubmit = (data: { data: typeof control[] }) => {
-    console.log("derp data", data);
-    const playlist = data["data"]
-      .filter((item) => item?.video?.length > 0)
-      .map((item) => {
-        console.log("item", item);
-        const id = item["video"];
-        const starts = item["startSeconds"];
-        const ends = item["endSeconds"];
-        return { id, startSeconds: Number(starts), endSeconds: Number(ends) };
-      });
-    setPlaylist(playlist);
-  };
-  console.log("Derp field");
   return (
     <Container>
-      Video Id, Start Seconds, End Seconds
-      <form
-        onSubmit={(a) => {
-          return handleSubmit(onSubmit)(a);
-        }}
-      >
+      <InputSpan>
+        <Label>
+          <b>Video Id</b>
+        </Label>
+        <Label>
+          <b>Start Seconds</b>
+        </Label>
+        <Label>
+          <b>End Seconds</b>
+        </Label>
+      </InputSpan>
+      <form onSubmit={handleSubmit(onSubmit(setPlaylist))}>
         <FormContainer>
           {fields.map((field, i) => (
-            <span key={field.id}>
+            <InputSpan key={field.id}>
               <FormInput
-                name={`data[${i}].video`}
+                name={`data[${i}].id`}
                 ref={register()}
                 defaultValue={field[0]}
                 required={true}
@@ -129,17 +144,16 @@ export const Form: React.ComponentType<{
                 ref={register()}
                 defaultValue={field[2]}
               />
-            </span>
+            </InputSpan>
           ))}
-
           <ButtonContainer>
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                append({ 0: "", 1: "", 2: "" });
+                append({ 0: "5mMyZTc2tSg", 1: "", 2: "" });
               }}
             >
-              Add
+              Add Video
             </Button>
             <Button
               onClick={(e) => {
@@ -147,10 +161,10 @@ export const Form: React.ComponentType<{
                 remove(fields.length - 1);
               }}
             >
-              Remove
+              Remove Last
             </Button>
           </ButtonContainer>
-          <StartButton>Play </StartButton>
+          <StartButton>Play</StartButton>
         </FormContainer>
       </form>
     </Container>
