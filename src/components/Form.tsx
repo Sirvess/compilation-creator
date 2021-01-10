@@ -127,7 +127,7 @@ export const Form: React.ComponentType<{
   setPlaylist: (x: Video[]) => void;
 }> = ({ setPlaylist }) => {
   const videos = useSearchParams();
-  const { control, register, handleSubmit } = useForm({
+  const { control, register, getValues } = useForm({
     defaultValues: {
       videos: videos ? playlist2Form(videos) : FallbackVideos,
     },
@@ -150,7 +150,12 @@ export const Form: React.ComponentType<{
           <b>End Seconds</b>
         </Label>
       </InputSpan>
-      <form onSubmit={handleSubmit(onSubmit(setPlaylist))}>
+      <form
+        onSubmit={() => {
+          //@ts-ignore
+          onSubmit(setPlaylist)(getValues());
+        }}
+      >
         <FormContainer>
           {fields.map((field, i) => (
             <InputSpan key={field.id}>
