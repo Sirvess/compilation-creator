@@ -98,14 +98,41 @@ const FallbackVideos = [
   ["yC8SPG2LwSA", 15, 20],
 ];
 
+// May load compilation from URL
+// e.g. http://localhost:10001/?id=uvvqjyT0_gA,10,20&id=QESBcjX-G9g,10,20
+const useSearchParams = (): Playlist | undefined => {
+  const searchParams = new URL(document.location.href).searchParams;
+  const videos = searchParams.getAll("id");
+  const playlist = videos.map(
+    (s): Video => {
+      const splitstr = s.split(",");
+      const id = splitstr[0];
+      const startSeconds = Number(splitstr[1]);
+      const endSeconds = Number(splitstr[2]);
+      return { id, startSeconds, endSeconds };
+    }
+  );
+  return playlist.length > 0 ? playlist : undefined;
+};
+
+const playlist2Form = (playlist: Playlist): typeof FallbackVideos => {
+  return playlist.map(({ id, startSeconds, endSeconds }) => [
+    id,
+    startSeconds ?? 0, // TODO: Fallback
+    endSeconds ?? 0, // TODO: Fallback
+  ]);
+};
+
 export const Form: React.ComponentType<{
   setPlaylist: (x: Video[]) => void;
 }> = ({ setPlaylist }) => {
+  const videos = useSearchParams();
   const { control, register, handleSubmit } = useForm({
     defaultValues: {
-      videos: FallbackVideos,
+      videos: videos ? playlist2Form(videos) : FallbackVideos,
     },
   });
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "videos",
