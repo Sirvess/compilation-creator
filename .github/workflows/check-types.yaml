@@ -11,6 +11,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         uses: actions/setup-node@v1
+      - name: Install repo
         run: yarn install
       - name: Run tsc
         run: yarn check-types
