@@ -195,6 +195,32 @@ export const Form: React.ComponentType<{
             >
               Remove Last
             </Button>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                const vals = getValues();
+                //@ts-ignore
+                const playlist: Playlist = vals["data"]
+                  //@ts-ignore
+                  .filter((item) => item?.id?.length && item.id.length > 0)
+                  .map(({ id, startSeconds, endSeconds }: Video) => {
+                    return [
+                      id,
+                      Number(startSeconds),
+                      Number(endSeconds),
+                    ].join();
+                  })
+                  .join("&id=");
+
+                window.history.pushState(
+                  null,
+                  "",
+                  `${location.pathname}?id=${playlist}`
+                );
+              }}
+            >
+              Push to URL
+            </Button>
           </ButtonContainer>
           <StartButton>Play</StartButton>
         </FormContainer>
