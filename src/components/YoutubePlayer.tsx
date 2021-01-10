@@ -34,7 +34,6 @@ const useYTPlayer = (playerDivId: string, videos: Video[]) => {
     };
     return { YTPlayerEnded$, onPlayerEnded };
   });
-  const a: string = 2;
 
   React.useEffect(() => {
     if (youTubeIframeReady) {
