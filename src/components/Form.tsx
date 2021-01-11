@@ -218,9 +218,10 @@ export const Form: React.ComponentType<{
                   "",
                   `${location.pathname}?id=${playlist}`
                 );
+                navigator.clipboard.writeText(location.href);
               }}
             >
-              Push to URL
+              Push to URL and copy
             </Button>
           </ButtonContainer>
           <StartButton>Play</StartButton>
