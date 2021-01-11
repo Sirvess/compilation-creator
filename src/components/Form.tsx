@@ -77,10 +77,12 @@ const Label = styled.p`
   text-align: left;
   width: calc(100% / 3);
 `;
-const onSubmit = (setPlaylist: (x: Playlist) => void) => (data: {
+const onSubmit = (setPlaylist: (x: Playlist) => void) => ({
+  data,
+}: {
   data: Video[];
 }) => {
-  const playlist: Playlist = data["data"]
+  const playlist: Playlist = data
     .filter((item) => item?.id?.length && item.id.length > 0)
     .map(({ id, startSeconds, endSeconds }: Video) => {
       const starts = startSeconds;
@@ -115,7 +117,7 @@ const useSearchParams = (): Playlist | undefined => {
   return playlist.length > 0 ? playlist : undefined;
 };
 
-const playlist2Form = (playlist: Playlist): typeof FallbackVideos => {
+const playlist2DefaultValues = (playlist: Playlist): typeof FallbackVideos => {
   return playlist.map(({ id, startSeconds, endSeconds }) => [
     id,
     startSeconds ?? 0, // TODO: Fallback
@@ -127,9 +129,10 @@ export const Form: React.ComponentType<{
   setPlaylist: (x: Video[]) => void;
 }> = ({ setPlaylist }) => {
   const videos = useSearchParams();
-  const { control, register, getValues } = useForm({
+  const { control, register, getValues } = useForm<{ data: Video[] }>({
     defaultValues: {
-      videos: videos ? playlist2Form(videos) : FallbackVideos,
+      //@ts-ignore
+      videos: videos ? playlist2DefaultValues(videos) : FallbackVideos,
     },
   });
 
@@ -198,10 +201,8 @@ export const Form: React.ComponentType<{
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                const vals = getValues();
-                //@ts-ignore
-                const playlist: Playlist = vals["data"]
-                  //@ts-ignore
+                const { data } = getValues();
+                const playlist: string = data
                   .filter((item) => item?.id?.length && item.id.length > 0)
                   .map(({ id, startSeconds, endSeconds }: Video) => {
                     return [
