@@ -4,6 +4,8 @@
         "target": "es2019",
         "module": "esnext",
         "moduleResolution": "node",
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
         "skipLibCheck": true,
         "jsx": "react",
         "strict": true
