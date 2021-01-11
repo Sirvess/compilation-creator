@@ -1,0 +1,20 @@
+name: check-types
+
+on: push
+
+jobs:
+  check-types:
+    name: Check types
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+      - name: Install repo
+        run: yarn install
+      - name: Run tsc
+        run: yarn check-types
+
+        
