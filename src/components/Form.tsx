@@ -93,9 +93,9 @@ const onSubmit = (setPlaylist: (x: Playlist) => void) => (data: {
 // Used as initial value for form
 // Array index corresponds to index of property in Video-type
 const FallbackVideos = [
-  ["uvvqjyT0_gA", 98, 113],
-  ["QESBcjX-G9g", 105, 115],
-  ["yC8SPG2LwSA", 15, 20],
+  ["1wnE4vF9CQ4", 100, 110],
+  ["QESBcjX-G9g", 105, 110],
+  ["I6IBTNG8DWk", 210, 245],
 ];
 
 // May load compilation from URL
@@ -182,7 +182,7 @@ export const Form: React.ComponentType<{
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                append({ 0: "5mMyZTc2tSg", 1: "", 2: "" });
+                append({ 0: "qarhFjIRxNg", 1: 30, 2: 50 });
               }}
             >
               Add Video
