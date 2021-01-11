@@ -224,7 +224,25 @@ export const Form: React.ComponentType<{
               Push to URL and copy
             </Button>
           </ButtonContainer>
-          <StartButton>Play</StartButton>
+          <StartButton
+            onClick={() => {
+              const { data } = getValues();
+              const playlist: string = data
+                .filter((item) => item?.id?.length && item.id.length > 0)
+                .map(({ id, startSeconds, endSeconds }: Video) => {
+                  return [id, Number(startSeconds), Number(endSeconds)].join();
+                })
+                .join("&id=");
+
+              window.history.pushState(
+                null,
+                "",
+                `${location.pathname}?id=${playlist}`
+              );
+            }}
+          >
+            Play
+          </StartButton>
         </FormContainer>
       </form>
     </Container>
