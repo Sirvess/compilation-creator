@@ -24,6 +24,7 @@ const GlobalStyle = createGlobalStyle`
 
 export const Main = () => {
   const [playlist, setPlaylist] = React.useState<Video[] | null>(null);
+  return (
     <Root>
       {playlist ? (
         <Player videos={playlist} />
