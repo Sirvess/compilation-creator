@@ -27,10 +27,10 @@ const useYTPlayer = (playerDivId: string, videos: Video[]) => {
   }, [setYouTubeIframeReady]);
 
   const [{ YTPlayerEnded$, onPlayerEnded }] = React.useState(() => {
-    const subject = async<YT.Player>();
-    const YTPlayerEnded$ = new Stream(subject.source);
+    const ytPlayer = async<YT.Player>();
+    const YTPlayerEnded$ = new Stream(ytPlayer.source);
     const onPlayerEnded = (a: YT.Player) => {
-      subject.next(a);
+      ytPlayer.next(a);
     };
     return { YTPlayerEnded$, onPlayerEnded };
   });
