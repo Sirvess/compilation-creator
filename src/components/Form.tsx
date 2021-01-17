@@ -155,7 +155,6 @@ export const Form: React.ComponentType<{
       </InputSpan>
       <form
         onSubmit={() => {
-          //@ts-ignore
           onSubmit(setPlaylist)(getValues());
         }}
       >
