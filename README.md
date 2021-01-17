@@ -14,7 +14,7 @@ Basic app to create compilation of youtube videos to show e.g. when screensharin
 
 Clone the repo, run `yarn install`
 
-# Dev environment
+# Dev server
 
 After installing, run `yarn dev` and navigate to `localhost:10001` in your browser.
 
