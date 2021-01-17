@@ -1,10 +1,8 @@
 # Youtube compilation creator
 
-![check-types](https://github.com/Sirvess/compilation-creator/workflows/check-types/badge.svg)
+![check-types](https://github.com/Sirvess/compilation-creator/workflows/check-types/badge.svg) ![Build](https://github.com/Sirvess/compilation-creator/workflows/Build/badge.svg) [![Netlify Status](https://api.netlify.com/api/v1/badges/ec0e2c8a-4874-40cf-9a55-61c128ad9473/deploy-status)](https://app.netlify.com/sites/yt-compilation-creator/deploys)
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/ec0e2c8a-4874-40cf-9a55-61c128ad9473/deploy-status)](https://app.netlify.com/sites/yt-compilation-creator/deploys)
-
-Check it out here https://yt-compilation-creator.netlify.app/
+[Check it out here](https://yt-compilation-creator.netlify.app/)
 
 # What
 
