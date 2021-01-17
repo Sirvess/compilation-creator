@@ -1,10 +1,10 @@
-name: check-build
+name: Build
 
 on: push
 
 jobs:
-  check-build:
-    name: Check build
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
