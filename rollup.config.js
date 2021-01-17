@@ -14,7 +14,9 @@ export default {
         commonjs({
             transformMixedEsModules: true
         }),
-        typescript(),
+        typescript({
+            noEmitOnError: true
+        }),
         html(),
         replace({'process.env.NODE_ENV': JSON.stringify('DEV')})
     ]
