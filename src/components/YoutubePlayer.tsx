@@ -18,7 +18,11 @@ const initializeYouTubeIframeAPI = () => {
 // 2. Add youtube iframe api script to document head. Once loaded,
 //  window.onYouTubeIframeAPIReady will be called.
 // 3. Can now initiate player iframe
-const useYTPlayer = (playerDivId: string, videos: Video[]) => {
+const useYTPlayer = (
+  playerDivId: string,
+  videos: Video[],
+  loop: boolean = false
+) => {
   const [youTubeIframeReady, setYouTubeIframeReady] = React.useState(false);
   React.useEffect(() => {
     // window.onYouTubeIframeAPIReady will be called by YouTube Iframe API once loaded
@@ -46,6 +50,7 @@ const useYTPlayer = (playerDivId: string, videos: Video[]) => {
           autoplay: YT.AutoPlay.AutoPlay,
           start: firstVideo!!.startSeconds,
           end: firstVideo!!.endSeconds,
+          loop: loop ? YT.Loop.Loop : YT.Loop.SinglePlay,
         },
         events: {
           onReady: (event) => {
@@ -71,6 +76,7 @@ const useYTPlayer = (playerDivId: string, videos: Video[]) => {
     // HACK: Existing player sends multiple ended-events
     // Needs some investigating
     const sub = YTPlayerEnded$.throttle(2000)
+      .filter(() => !loop)
       .tap((player) => {
         const nextVid = videos.pop();
         if (nextVid) {
@@ -91,10 +97,11 @@ const useYTPlayer = (playerDivId: string, videos: Video[]) => {
   }, [YTPlayerEnded$]);
 };
 
-export const Player: React.ComponentType<{
-  videos: Video[];
-}> = ({ videos }) => {
-  useYTPlayer(PLAYER_DIV_ID, videos);
+export const Player: React.ComponentType<Playlist> = ({
+  videos,
+  options: { loop },
+}) => {
+  useYTPlayer(PLAYER_DIV_ID, videos, loop);
 
   return <div id={PLAYER_DIV_ID} />;
 };

@@ -23,11 +23,11 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 export const Main = () => {
-  const [playlist, setPlaylist] = React.useState<Video[] | null>(null);
+  const [playlist, setPlaylist] = React.useState<Playlist | null>(null);
   return (
     <Root>
       {playlist ? (
-        <Player videos={playlist} />
+        <Player videos={playlist.videos} options={playlist.options} />
       ) : (
         <Form setPlaylist={setPlaylist} />
       )}
