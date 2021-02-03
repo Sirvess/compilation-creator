@@ -41,7 +41,7 @@ const useYTPlayer = (
 
   React.useEffect(() => {
     if (youTubeIframeReady) {
-      const firstVideo = videos.pop();
+      const firstVideo = !loop ? videos.pop() : videos[0];
       new YT.Player(playerDivId, {
         height: "100%",
         width: "100%",
@@ -50,7 +50,6 @@ const useYTPlayer = (
           autoplay: YT.AutoPlay.AutoPlay,
           start: firstVideo!!.startSeconds,
           end: firstVideo!!.endSeconds,
-          loop: loop ? YT.Loop.Loop : YT.Loop.SinglePlay,
         },
         events: {
           onReady: (event) => {
@@ -76,9 +75,8 @@ const useYTPlayer = (
     // HACK: Existing player sends multiple ended-events
     // Needs some investigating
     const sub = YTPlayerEnded$.throttle(2000)
-      .filter(() => !loop)
       .tap((player) => {
-        const nextVid = videos.pop();
+        const nextVid = !loop ? videos.pop() : videos[0];
         if (nextVid) {
           player.cueVideoById({
             videoId: nextVid.id,
