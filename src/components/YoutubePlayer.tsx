@@ -14,6 +14,29 @@ const initializeYouTubeIframeAPI = () => {
   }
 };
 
+const usePlaylist = (
+  videos: Video[],
+  loop: boolean = false
+): { getNextVideo: () => Video | null; getFirstVideo: () => Video | null } => {
+  const [{ getFirstVideo, getNextVideo }] = React.useState(() => {
+    let nextIndex = 0;
+    const getNextVideo = () => {
+      if (!loop && nextIndex === videos.length - 1) {
+        return null;
+      } else if (loop && nextIndex === videos.length - 1) {
+        nextIndex = 0;
+      } else {
+        nextIndex = nextIndex + 1;
+      }
+      return videos[nextIndex];
+    };
+
+    return { getNextVideo, getFirstVideo: () => videos[0] };
+  });
+
+  return { getNextVideo, getFirstVideo };
+};
+
 // 1. Add onYouTubeIframeAPIReady call back to window
 // 2. Add youtube iframe api script to document head. Once loaded,
 //  window.onYouTubeIframeAPIReady will be called.
@@ -39,9 +62,11 @@ const useYTPlayer = (
     return { YTPlayerEnded$, onPlayerEnded };
   });
 
+  const { getFirstVideo, getNextVideo } = usePlaylist(videos, loop);
+
   React.useEffect(() => {
     if (youTubeIframeReady) {
-      const firstVideo = !loop ? videos.pop() : videos[0];
+      const firstVideo = getFirstVideo();
       new YT.Player(playerDivId, {
         height: "100%",
         width: "100%",
@@ -76,7 +101,7 @@ const useYTPlayer = (
     // Needs some investigating
     const sub = YTPlayerEnded$.throttle(2000)
       .tap((player) => {
-        const nextVid = !loop ? videos.pop() : videos[0];
+        const nextVid = getNextVideo();
         if (nextVid) {
           player.cueVideoById({
             videoId: nextVid.id,
