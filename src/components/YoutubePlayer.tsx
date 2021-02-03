@@ -19,7 +19,7 @@ const usePlaylist = (
   loop: boolean = false
 ): { getNextVideo: () => Video | null; getFirstVideo: () => Video | null } => {
   const [{ getFirstVideo, getNextVideo }] = React.useState(() => {
-    let nextIndex = 0;
+    let nextIndex = 0; // May this never escape this hook
     const getNextVideo = () => {
       if (!loop && nextIndex === videos.length - 1) {
         return null;
