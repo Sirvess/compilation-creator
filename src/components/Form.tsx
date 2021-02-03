@@ -93,8 +93,7 @@ const onSubmit = (setPlaylist: (x: Playlist) => void) => ({
       const starts = startSeconds;
       const ends = endSeconds;
       return { id, startSeconds: Number(starts), endSeconds: Number(ends) };
-    })
-    .reverse();
+    });
   setPlaylist({ videos, options: { loop } });
 };
 
