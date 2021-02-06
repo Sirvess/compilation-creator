@@ -215,6 +215,14 @@ export const Form: React.ComponentType<{
             <Button
               onClick={(e) => {
                 e.preventDefault();
+                window.history.pushState(null, "", "/");
+              }}
+            >
+              Clear URL
+            </Button>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
                 const { data } = getValues();
                 const playlist: string = data
                   .filter((item) => item?.id?.length && item.id.length > 0)
