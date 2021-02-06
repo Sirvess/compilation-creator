@@ -1,18 +1,8 @@
 import * as React from "react";
-import { Stream } from "most";
 import { async } from "most-subject";
+import { Stream } from "most";
 
-const PLAYER_DIV_ID = "player";
-
-const initializeYouTubeIframeAPI = () => {
-  if (
-    !document.querySelector('script[src="https://www.youtube.com/iframe_api"]')
-  ) {
-    const ytscript = document.createElement("script");
-    ytscript.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(ytscript);
-  }
-};
+import { initializeYouTubeIframeAPI } from "./utils";
 
 const usePlaylist = (
   videos: Video[],
@@ -37,11 +27,20 @@ const usePlaylist = (
   return { getNextVideo, getFirstVideo };
 };
 
+const initYTAutoplaySubject = () => {
+  const ytPlayer = async<YT.Player>();
+  const YTPlayerEnded$ = new Stream(ytPlayer.source);
+  const onPlayerEnded = (a: YT.Player) => {
+    ytPlayer.next(a);
+  };
+  return { YTPlayerEnded$, onPlayerEnded };
+};
+
 // 1. Add onYouTubeIframeAPIReady call back to window
 // 2. Add youtube iframe api script to document head. Once loaded,
 //  window.onYouTubeIframeAPIReady will be called.
 // 3. Can now initiate player iframe
-const useYTPlayer = (
+export const useYTPlayer = (
   playerDivId: string,
   videos: Video[],
   loop: boolean = false
@@ -53,17 +52,13 @@ const useYTPlayer = (
     initializeYouTubeIframeAPI();
   }, [setYouTubeIframeReady]);
 
-  const [{ YTPlayerEnded$, onPlayerEnded }] = React.useState(() => {
-    const ytPlayer = async<YT.Player>();
-    const YTPlayerEnded$ = new Stream(ytPlayer.source);
-    const onPlayerEnded = (a: YT.Player) => {
-      ytPlayer.next(a);
-    };
-    return { YTPlayerEnded$, onPlayerEnded };
-  });
+  const [{ YTPlayerEnded$, onPlayerEnded }] = React.useState(
+    initYTAutoplaySubject
+  );
 
   const { getFirstVideo, getNextVideo } = usePlaylist(videos, loop);
 
+  // This effect will instantiate the player and target the DOM element with `playerDivId`
   React.useEffect(() => {
     if (youTubeIframeReady) {
       const firstVideo = getFirstVideo();
@@ -118,13 +113,4 @@ const useYTPlayer = (
       .subscribe({} as any);
     return () => sub.unsubscribe();
   }, [YTPlayerEnded$]);
-};
-
-export const Player: React.ComponentType<Playlist> = ({
-  videos,
-  options: { loop },
-}) => {
-  useYTPlayer(PLAYER_DIV_ID, videos, loop);
-
-  return <div id={PLAYER_DIV_ID} />;
 };
