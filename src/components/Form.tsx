@@ -77,19 +77,24 @@ const Label = styled.p`
   text-align: left;
   width: calc(100% / 3);
 `;
+
+type FormData = {
+  data: Video[];
+  loop: boolean;
+};
+
 const onSubmit = (setPlaylist: (x: Playlist) => void) => ({
   data,
-}: {
-  data: Video[];
-}) => {
-  const playlist: Playlist = data
+  loop,
+}: FormData) => {
+  const videos: Playlist["videos"] = data
     .filter((item) => item?.id?.length && item.id.length > 0)
     .map(({ id, startSeconds, endSeconds }: Video) => {
       const starts = startSeconds;
       const ends = endSeconds;
       return { id, startSeconds: Number(starts), endSeconds: Number(ends) };
     });
-  setPlaylist(playlist.reverse());
+  setPlaylist({ videos, options: { loop } });
 };
 
 // Used as initial value for form
@@ -114,11 +119,15 @@ const useSearchParams = (): Playlist | undefined => {
       return { id, startSeconds, endSeconds };
     }
   );
-  return playlist.length > 0 ? playlist : undefined;
+  return playlist.length > 0
+    ? { videos: playlist, options: { loop: false } }
+    : undefined;
 };
 
-const playlist2DefaultValues = (playlist: Playlist): typeof FallbackVideos => {
-  return playlist.map(({ id, startSeconds, endSeconds }) => [
+const playlist2DefaultValues = ({
+  videos,
+}: Playlist): typeof FallbackVideos => {
+  return videos.map(({ id, startSeconds, endSeconds }) => [
     id,
     startSeconds ?? 0, // TODO: Fallback
     endSeconds ?? 0, // TODO: Fallback
@@ -126,10 +135,10 @@ const playlist2DefaultValues = (playlist: Playlist): typeof FallbackVideos => {
 };
 
 export const Form: React.ComponentType<{
-  setPlaylist: (x: Video[]) => void;
+  setPlaylist: (x: Playlist) => void;
 }> = ({ setPlaylist }) => {
   const videos = useSearchParams();
-  const { control, register, getValues } = useForm<{ data: Video[] }>({
+  const { control, register, getValues } = useForm<FormData>({
     defaultValues: {
       //@ts-ignore
       videos: videos ? playlist2DefaultValues(videos) : FallbackVideos,
@@ -180,6 +189,12 @@ export const Form: React.ComponentType<{
               />
             </InputSpan>
           ))}
+          <InputSpan>
+            <Label>
+              Loop
+              <FormInput type="checkbox" name={"loop"} ref={register()} />
+            </Label>
+          </InputSpan>
           <ButtonContainer>
             <Button
               onClick={(e) => {
