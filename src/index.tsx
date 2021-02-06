@@ -24,6 +24,14 @@ const GlobalStyle = createGlobalStyle`
 
 export const Main = () => {
   const [playlist, setPlaylist] = React.useState<Playlist | null>(null);
+
+  React.useEffect(() => {
+    const reload = () => {
+      window.location.reload();
+    };
+    window.addEventListener("popstate", reload);
+    return () => window.removeEventListener("popstate", reload);
+  }, []);
   return (
     <Root>
       {playlist ? (
