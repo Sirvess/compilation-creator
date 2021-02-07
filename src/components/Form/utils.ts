@@ -1,7 +1,7 @@
 import type { FormData } from "./";
 
-export const formData2Videos = (data: FormData["data"]): Video[] => {
-  const playlistobj = data
+export const formData2Videos = (data: FormData["data"]): Video[] =>
+  data
     .filter((item) => item?.id?.length && item.id.length > 0)
     .map(
       ({ id, startSeconds, endSeconds }): Video => ({
@@ -10,8 +10,6 @@ export const formData2Videos = (data: FormData["data"]): Video[] => {
         endSeconds: Number(endSeconds),
       })
     );
-  return playlistobj;
-};
 
 export const isSameVideoList = (
   a: Video[] | undefined,
