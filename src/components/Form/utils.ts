@@ -16,11 +16,10 @@ export const formData2Videos = (data: FormData["data"]): Video[] => {
 export const isSameVideoList = (
   a: Video[] | undefined,
   b: Video[] | undefined
-): boolean => {
-  if (a === undefined || b === undefined || a.length !== b.length) {
-    return false;
-  }
-  return a
+): boolean =>
+  !(a === undefined || b === undefined) &&
+  a.length !== b.length &&
+  a
     .map((x, i) => [x, b[i]])
     .reduce(
       (
@@ -32,4 +31,3 @@ export const isSameVideoList = (
       ) => (!acc ? acc : ida === idb && sa === sb && ea === eb),
       true as boolean
     );
-};
