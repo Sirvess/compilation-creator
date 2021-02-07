@@ -67,6 +67,7 @@ export const useYTPlayer = (
         width: "100%",
         videoId: firstVideo!!.id,
         playerVars: {
+          rel: YT.RelatedVideos.Hide,
           autoplay: YT.AutoPlay.AutoPlay,
           start: firstVideo!!.startSeconds,
           end: firstVideo!!.endSeconds,
