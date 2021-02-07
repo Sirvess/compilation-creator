@@ -29,7 +29,7 @@ export const isSameVideoList = (
           { id: ida, startSeconds: sa, endSeconds: ea },
           { id: idb, startSeconds: sb, endSeconds: eb },
         ]
-      ) => (!acc ? acc : ida == idb && sa === sb && ea === eb),
+      ) => (!acc ? acc : ida === idb && sa === sb && ea === eb),
       true as boolean
     );
 };
