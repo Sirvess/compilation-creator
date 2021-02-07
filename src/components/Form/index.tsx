@@ -2,6 +2,8 @@ import * as React from "react";
 import styled from "styled-components";
 import { useForm, useFieldArray } from "react-hook-form";
 
+import { formData2Videos, isSameVideoList } from "./utils";
+
 const FORM_WIDTH = `900px`;
 
 const Button = styled.button`
@@ -78,8 +80,12 @@ const Label = styled.p`
   width: calc(100% / 3);
 `;
 
-type FormData = {
-  data: Video[];
+export type FormData = {
+  data: {
+    id: string;
+    startSeconds: string | undefined;
+    endSeconds: string | undefined;
+  }[];
   loop: boolean;
 };
 
@@ -87,13 +93,7 @@ const onSubmit = (setPlaylist: (x: Playlist) => void) => ({
   data,
   loop,
 }: FormData) => {
-  const videos: Playlist["videos"] = data
-    .filter((item) => item?.id?.length && item.id.length > 0)
-    .map(({ id, startSeconds, endSeconds }: Video) => {
-      const starts = startSeconds;
-      const ends = endSeconds;
-      return { id, startSeconds: Number(starts), endSeconds: Number(ends) };
-    });
+  const videos: Playlist["videos"] = formData2Videos(data);
   setPlaylist({ videos, options: { loop } });
 };
 
@@ -224,22 +224,20 @@ export const Form: React.ComponentType<{
               onClick={(e) => {
                 e.preventDefault();
                 const { data } = getValues();
-                const playlist: string = data
-                  .filter((item) => item?.id?.length && item.id.length > 0)
-                  .map(({ id, startSeconds, endSeconds }: Video) => {
-                    return [
-                      id,
-                      Number(startSeconds),
-                      Number(endSeconds),
-                    ].join();
-                  })
-                  .join("&id=");
+                const formdatavideos = formData2Videos(data);
 
-                window.history.pushState(
-                  null,
-                  "",
-                  `${location.pathname}?id=${playlist}`
-                );
+                if (!isSameVideoList(videos?.videos, formdatavideos)) {
+                  const playliststr: string = formdatavideos
+                    .map(({ id, startSeconds, endSeconds }: Video) =>
+                      [id, startSeconds, endSeconds].join()
+                    )
+                    .join("&id=");
+                  window.history.pushState(
+                    null,
+                    "",
+                    `${location.pathname}?id=${playliststr}`
+                  );
+                }
                 navigator.clipboard.writeText(location.href);
               }}
             >
@@ -249,18 +247,18 @@ export const Form: React.ComponentType<{
           <StartButton
             onClick={() => {
               const { data } = getValues();
-              const playlist: string = data
-                .filter((item) => item?.id?.length && item.id.length > 0)
-                .map(({ id, startSeconds, endSeconds }: Video) => {
-                  return [id, Number(startSeconds), Number(endSeconds)].join();
-                })
-                .join("&id=");
+              const formdatavideos = formData2Videos(data);
 
-              if (videos?.videos !== data) {
+              if (!isSameVideoList(videos?.videos, formdatavideos)) {
+                const playliststr: string = formdatavideos
+                  .map(({ id, startSeconds, endSeconds }: Video) =>
+                    [id, startSeconds, endSeconds].join()
+                  )
+                  .join("&id=");
                 window.history.pushState(
                   null,
                   "",
-                  `${location.pathname}?id=${playlist}`
+                  `${location.pathname}?id=${playliststr}`
                 );
               }
             }}
