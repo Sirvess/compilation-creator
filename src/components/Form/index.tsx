@@ -256,11 +256,13 @@ export const Form: React.ComponentType<{
                 })
                 .join("&id=");
 
-              window.history.pushState(
-                null,
-                "",
-                `${location.pathname}?id=${playlist}`
-              );
+              if (videos?.videos !== data) {
+                window.history.pushState(
+                  null,
+                  "",
+                  `${location.pathname}?id=${playlist}`
+                );
+              }
             }}
           >
             Play
