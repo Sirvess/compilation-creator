@@ -121,7 +121,7 @@ const useSearchParams = (): Playlist | undefined => {
     }
   );
   return playlist.length > 0
-    ? { videos: playlist, options: { loop: !!loop } }
+    ? { videos: playlist, options: { loop: loop === "true" ? true : false } }
     : undefined;
 };
 
@@ -190,7 +190,12 @@ export const Form: React.ComponentType<{
           <InputSpan>
             <Label>
               Loop
-              <FormInput type="checkbox" name={"loop"} ref={register()} />
+              <FormInput
+                type="checkbox"
+                name={"loop"}
+                ref={register()}
+                defaultChecked={videos?.options.loop}
+              />
             </Label>
           </InputSpan>
           <ButtonContainer>
