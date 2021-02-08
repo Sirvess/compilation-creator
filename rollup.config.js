@@ -17,7 +17,7 @@ export default {
         typescript({
             noEmitOnError: true
         }),
-        html(),
+        html({title:"yt-compilation-creator"}),
         replace({'process.env.NODE_ENV': JSON.stringify('DEV')})
     ]
 };
