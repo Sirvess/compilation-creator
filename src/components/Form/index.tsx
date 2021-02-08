@@ -110,6 +110,7 @@ const FallbackVideos = [
 const useSearchParams = (): Playlist | undefined => {
   const searchParams = new URL(document.location.href).searchParams;
   const videos = searchParams.getAll("id");
+  const loop = searchParams.get("loop");
   const playlist = videos.map(
     (s): Video => {
       const splitstr = s.split(",");
@@ -120,19 +121,16 @@ const useSearchParams = (): Playlist | undefined => {
     }
   );
   return playlist.length > 0
-    ? { videos: playlist, options: { loop: false } }
+    ? { videos: playlist, options: { loop: !!loop } }
     : undefined;
 };
 
-const playlist2DefaultValues = ({
-  videos,
-}: Playlist): typeof FallbackVideos => {
-  return videos.map(({ id, startSeconds, endSeconds }) => [
+const playlist2DefaultValues = ({ videos }: Playlist): typeof FallbackVideos =>
+  videos.map(({ id, startSeconds, endSeconds }) => [
     id,
-    startSeconds ?? 0, // TODO: Fallback
-    endSeconds ?? 0, // TODO: Fallback
+    startSeconds ?? 0,
+    endSeconds ?? 0,
   ]);
-};
 
 export const Form: React.ComponentType<{
   setPlaylist: (x: Playlist) => void;
@@ -223,7 +221,7 @@ export const Form: React.ComponentType<{
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                const { data } = getValues();
+                const { data, loop } = getValues();
                 const formdatavideos = formData2Videos(data);
 
                 if (!isSameVideoList(videos?.videos, formdatavideos)) {
@@ -235,7 +233,7 @@ export const Form: React.ComponentType<{
                   window.history.pushState(
                     null,
                     "",
-                    `${location.pathname}?id=${playliststr}`
+                    `${location.pathname}?id=${playliststr}&loop=${loop}`
                   );
                 }
                 navigator.clipboard.writeText(location.href);
@@ -246,19 +244,25 @@ export const Form: React.ComponentType<{
           </ButtonContainer>
           <StartButton
             onClick={() => {
-              const { data } = getValues();
+              const { data, loop } = getValues();
               const formdatavideos = formData2Videos(data);
 
-              if (!isSameVideoList(videos?.videos, formdatavideos)) {
+              if (
+                !(
+                  isSameVideoList(videos?.videos, formdatavideos) &&
+                  loop == videos?.options.loop
+                )
+              ) {
                 const playliststr: string = formdatavideos
                   .map(({ id, startSeconds, endSeconds }: Video) =>
                     [id, startSeconds, endSeconds].join()
                   )
                   .join("&id=");
+
                 window.history.pushState(
                   null,
                   "",
-                  `${location.pathname}?id=${playliststr}`
+                  `${location.pathname}?id=${playliststr}&loop=${loop}`
                 );
               }
             }}
