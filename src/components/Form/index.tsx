@@ -34,6 +34,8 @@ const StartButton = styled(Button)`
 
 const FlexContainer = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Container = styled(FlexContainer)`
@@ -41,15 +43,12 @@ const Container = styled(FlexContainer)`
   background-color: white;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
   height: 100%;
   width: 100%;
 `;
 
 const FormContainer = styled(FlexContainer)`
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
   min-width: ${FORM_WIDTH};
 `;
 
@@ -59,10 +58,6 @@ const FormInput = styled.input`
   width: calc(100% / 3);
   margin: 10px 10px 10px 0px;
   font-size: 20px;
-`;
-const ButtonContainer = styled(FlexContainer)`
-  justify-content: center;
-  align-items: center;
 `;
 
 const InputSpan = styled.span`
@@ -198,7 +193,7 @@ export const Form: React.ComponentType<{
               />
             </Label>
           </InputSpan>
-          <ButtonContainer>
+          <FlexContainer>
             <Button
               onClick={(e) => {
                 e.preventDefault();
@@ -246,7 +241,7 @@ export const Form: React.ComponentType<{
             >
               Push to URL and copy
             </Button>
-          </ButtonContainer>
+          </FlexContainer>
           <StartButton
             onClick={() => {
               const { data, loop } = getValues();
