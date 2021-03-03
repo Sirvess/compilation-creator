@@ -26,11 +26,8 @@ export const Main = () => {
   const [playlist, setPlaylist] = React.useState<Playlist | null>(null);
 
   React.useEffect(() => {
-    const reload = () => {
-      window.location.reload();
-    };
-    window.addEventListener("popstate", reload);
-    return () => window.removeEventListener("popstate", reload);
+    window.addEventListener("popstate", window.location.reload);
+    return () => window.removeEventListener("popstate", window.location.reload);
   }, []);
   return (
     <Root>
